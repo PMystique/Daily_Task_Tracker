@@ -267,6 +267,8 @@ export const INITIAL_ROUTINE_ITEMS: RoutineItem[] = [
     title: 'Wake up & drink 500ml water',
     details: 'Immediate rehydration and light natural light exposure.',
     completedDates: [getRelativeDate(0)],
+    lastCompletedDate: new Date().toISOString(),
+    frequency: 'everyday',
     order: 1
   },
   {
@@ -276,6 +278,8 @@ export const INITIAL_ROUTINE_ITEMS: RoutineItem[] = [
     title: 'Morning stretch & full-body mobility',
     details: '20 minutes hip flexor, hamstring release & spine activation.',
     completedDates: [getRelativeDate(0)],
+    lastCompletedDate: new Date().toISOString(),
+    frequency: 'everyday',
     order: 2
   },
   {
@@ -285,6 +289,8 @@ export const INITIAL_ROUTINE_ITEMS: RoutineItem[] = [
     title: 'Refreshing shower & morning prep',
     details: 'Cold finish for alertness and focus preparation.',
     completedDates: [getRelativeDate(0)],
+    lastCompletedDate: new Date().toISOString(),
+    frequency: 'weekdays',
     order: 3
   },
   {
@@ -294,6 +300,7 @@ export const INITIAL_ROUTINE_ITEMS: RoutineItem[] = [
     title: 'Focus & Deep Work Block',
     details: 'Core project execution, planning, and high-priority tasks.',
     completedDates: [],
+    frequency: 'weekdays',
     order: 4
   },
   {
@@ -303,6 +310,7 @@ export const INITIAL_ROUTINE_ITEMS: RoutineItem[] = [
     title: 'Morning Commute / Transit',
     details: 'Listen to podcasts or industry news.',
     completedDates: [],
+    frequency: 'weekdays',
     order: 5
   },
 
@@ -314,6 +322,7 @@ export const INITIAL_ROUTINE_ITEMS: RoutineItem[] = [
     title: 'Daily progress review & tomorrow planning',
     details: 'Check off completed items, review calendar, set 3 top priorities for tomorrow.',
     completedDates: [],
+    frequency: 'everyday',
     order: 1
   },
   {
@@ -323,6 +332,7 @@ export const INITIAL_ROUTINE_ITEMS: RoutineItem[] = [
     title: 'Nutritious dinner & family unwind',
     details: 'Mindful eating, step away from work screens.',
     completedDates: [],
+    frequency: 'everyday',
     order: 2
   },
   {
@@ -332,6 +342,7 @@ export const INITIAL_ROUTINE_ITEMS: RoutineItem[] = [
     title: 'Skill acquisition / Technical reading',
     details: 'Read 30-45 mins of technology, leadership, or personal development literature.',
     completedDates: [],
+    frequency: 'weekdays',
     order: 3
   },
   {
@@ -341,6 +352,7 @@ export const INITIAL_ROUTINE_ITEMS: RoutineItem[] = [
     title: 'Digital detox & bedtime stretch',
     details: 'Dim lights, blue-light block, prepare gear for early wake-up.',
     completedDates: [],
+    frequency: 'everyday',
     order: 4
   },
   {
@@ -350,6 +362,7 @@ export const INITIAL_ROUTINE_ITEMS: RoutineItem[] = [
     title: 'In bed for restful sleep',
     details: 'Targeting 7 hours of uninterrupted quality sleep.',
     completedDates: [],
+    frequency: 'everyday',
     order: 5
   },
 
@@ -361,6 +374,7 @@ export const INITIAL_ROUTINE_ITEMS: RoutineItem[] = [
     title: 'Gentle weekend wake up',
     details: 'Hydrate and light morning hydration breathwork.',
     completedDates: [],
+    frequency: 'weekends',
     order: 1
   },
   {
@@ -370,6 +384,7 @@ export const INITIAL_ROUTINE_ITEMS: RoutineItem[] = [
     title: 'Extended outdoor run or gym session',
     details: 'Zone 2 cardio or strength training.',
     completedDates: [],
+    frequency: 'weekends',
     order: 2
   },
   {
@@ -379,6 +394,7 @@ export const INITIAL_ROUTINE_ITEMS: RoutineItem[] = [
     title: 'Healthy breakfast & weekly reflection',
     details: 'Write down weekly achievements and big picture long-term goals.',
     completedDates: [],
+    frequency: 'weekends',
     order: 3
   },
   {
@@ -388,6 +404,7 @@ export const INITIAL_ROUTINE_ITEMS: RoutineItem[] = [
     title: 'Side Projects & Creative Focus',
     details: 'Skill building, writing, or personal project development.',
     completedDates: [],
+    frequency: 'weekends',
     order: 4
   },
   {
@@ -397,6 +414,7 @@ export const INITIAL_ROUTINE_ITEMS: RoutineItem[] = [
     title: 'Meal prep & weekly organization',
     details: 'Grocery run, workspace setup, and digital desktop cleanup.',
     completedDates: [],
+    frequency: 'weekends',
     order: 5
   },
   {
@@ -406,6 +424,7 @@ export const INITIAL_ROUTINE_ITEMS: RoutineItem[] = [
     title: 'Social time, hobbies & rest',
     details: 'Unplugged quality time with family and friends.',
     completedDates: [],
+    frequency: 'weekends',
     order: 6
   }
 ];

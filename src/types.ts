@@ -51,6 +51,8 @@ export interface Task {
 }
 
 export type RoutineType = 'morning' | 'evening' | 'weekend';
+export type RoutineFrequency = 'everyday' | 'weekdays' | 'weekends';
+export type DayOfWeek = 'Mon' | 'Tue' | 'Wed' | 'Thu' | 'Fri' | 'Sat' | 'Sun';
 
 export interface RoutineItem {
   id: string;
@@ -59,6 +61,10 @@ export interface RoutineItem {
   title: string;
   details?: string;
   completedDates: string[]; // YYYY-MM-DD array of days completed
+  lastCompletedDate?: string; // ISO string of when item was last marked completed
+  frequency?: RoutineFrequency; // 'everyday' | 'weekdays' | 'weekends'
+  specificDays?: DayOfWeek[]; // e.g. ['Mon', 'Thu'] or ['Thu']
+  isTimeBlock?: boolean; // True if item represents a time block without checkbox
   order: number;
 }
 

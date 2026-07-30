@@ -7,6 +7,7 @@ import {
   NotificationSetting, 
   FilterState, 
   RoutineType,
+  RoutineFrequency,
   SubTask
 } from './types';
 import { 
@@ -45,7 +46,7 @@ import { ProgressAnalytics } from './components/ProgressAnalytics';
 import { TaskModal } from './components/TaskModal';
 import { GoalDetailModal } from './components/GoalDetailModal';
 import { NotificationToast, ToastAlert } from './components/NotificationToast';
-import { AskCoachModal } from './components/AskCoachModal';
+import { AskCoachModal, RoutineEditUpdate } from './components/AskCoachModal';
 import { ProactiveCopilotCards } from './components/ProactiveCopilotCards';
 import { CompactMetricRibbon } from './components/CompactMetricRibbon';
 
@@ -213,23 +214,89 @@ export default function App() {
   const [toasts, setToasts] = useState<ToastAlert[]>([]);
 
   // AI Coach & Copilot Handlers
-  const handleApplyCoachPlan = (newGoal: Task, newTasks: Task[], newRoutines: RoutineItem[]) => {
-    setTasks((prev) => {
-      const updated = [...prev, newGoal, ...newTasks];
-      saveTasks(updated);
-      return updated;
-    });
+  const handleApplyCoachPlan = (
+    newGoal?: Task | null,
+    newTasks?: Task[],
+    newRoutines?: RoutineItem[],
+    routineEdits?: RoutineEditUpdate[]
+  ) => {
+    if (newGoal || (newTasks && newTasks.length > 0)) {
+      setTasks((prev) => {
+        const addition: Task[] = [];
+        if (newGoal) addition.push(newGoal);
+        if (newTasks) addition.push(...newTasks);
+        const updated = [...addition, ...prev];
+        saveTasks(updated);
+        return updated;
+      });
+    }
 
-    setRoutines((prev) => {
-      const updated = [...prev, ...newRoutines];
-      saveRoutines(updated);
-      return updated;
-    });
+    if ((newRoutines && newRoutines.length > 0) || (routineEdits && routineEdits.length > 0)) {
+      setRoutines((prev) => {
+        let updated = [...prev];
+        if (newRoutines && newRoutines.length > 0) {
+          newRoutines.forEach((nr) => {
+            const nrTitleNorm = nr.title.toLowerCase().trim();
+            const existingIdx = updated.findIndex((r) => {
+              const rTitleNorm = r.title.toLowerCase().trim();
+              return (
+                rTitleNorm === nrTitleNorm ||
+                (nrTitleNorm.length > 3 && rTitleNorm.includes(nrTitleNorm)) ||
+                (rTitleNorm.length > 3 && nrTitleNorm.includes(rTitleNorm))
+              );
+            });
+
+            if (existingIdx !== -1) {
+              updated[existingIdx] = {
+                ...updated[existingIdx],
+                timeSlot: nr.timeSlot || updated[existingIdx].timeSlot,
+                details: nr.details !== undefined ? nr.details : updated[existingIdx].details,
+                frequency: nr.frequency || updated[existingIdx].frequency,
+                specificDays: nr.specificDays || updated[existingIdx].specificDays,
+                isTimeBlock: nr.isTimeBlock !== undefined ? nr.isTimeBlock : updated[existingIdx].isTimeBlock,
+              };
+            } else {
+              updated.push(nr);
+            }
+          });
+        }
+        if (routineEdits && routineEdits.length > 0) {
+          updated = updated.map((r) => {
+            const match = routineEdits.find(
+              (e) =>
+                (e.id && e.id === r.id) ||
+                (e.titleToMatch && r.title.toLowerCase().includes(e.titleToMatch.toLowerCase()))
+            );
+            if (match) {
+              return {
+                ...r,
+                timeSlot: match.newTimeSlot || r.timeSlot,
+                title: match.newTitle || r.title,
+                details: match.newDetails !== undefined ? match.newDetails : r.details,
+                routineType: match.routineType || r.routineType,
+                frequency: match.frequency || r.frequency,
+                specificDays: match.specificDays || r.specificDays,
+                isTimeBlock: match.isTimeBlock !== undefined ? match.isTimeBlock : r.isTimeBlock,
+              };
+            }
+            return r;
+          });
+        }
+        saveRoutines(updated);
+        return updated;
+      });
+    }
+
+    const parts = [];
+    if (newGoal) parts.push(`Goal ("${newGoal.title}")`);
+    if (newTasks && newTasks.length > 0) parts.push(`${newTasks.length} tasks`);
+    if (newRoutines && newRoutines.length > 0) parts.push(`${newRoutines.length} new routines`);
+    if (routineEdits && routineEdits.length > 0) parts.push(`${routineEdits.length} routine edits`);
 
     const newToast: ToastAlert = {
       id: `toast-${Date.now()}`,
       title: '✨ AI Coach Plan Applied',
-      message: `Scheduled 1 Goal target ("${newGoal.title}"), ${newTasks.length} tasks, and ${newRoutines.length} routine protocols.`,
+      message: parts.length > 0 ? `Successfully updated: ${parts.join(', ')}.` : 'AI schedule changes applied.',
       timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
     };
     setToasts((prev) => [newToast, ...prev].slice(0, 4));
@@ -330,12 +397,20 @@ export default function App() {
     setTasks((prev) => [newTask, ...prev]);
   };
 
-  // Default to Dark Theme for High Density design theme unless user toggles
+  // Dynamic Light / Dark mode toggle with localStorage persistence
   useEffect(() => {
+    const root = document.documentElement;
+    const body = document.body;
     if (theme === 'dark') {
-      document.documentElement.classList.add('dark');
+      root.classList.add('dark');
+      root.classList.remove('light');
+      body.classList.add('dark');
+      body.classList.remove('light');
     } else {
-      document.documentElement.classList.remove('dark');
+      root.classList.remove('dark');
+      root.classList.add('light');
+      body.classList.remove('dark');
+      body.classList.add('light');
     }
     saveTheme(theme);
   }, [theme]);
@@ -527,6 +602,10 @@ export default function App() {
       completedDates: [],
     };
     setRoutines((prev) => [...prev, newItem]);
+  };
+
+  const handleEditRoutineItem = (updatedItem: RoutineItem) => {
+    setRoutines((prev) => prev.map((r) => (r.id === updatedItem.id ? updatedItem : r)));
   };
 
   const handleDeleteRoutineItem = (itemId: string) => {
@@ -1108,6 +1187,7 @@ export default function App() {
               routines={routines}
               onToggleRoutineItem={handleToggleRoutineItem}
               onAddRoutineItem={handleAddRoutineItem}
+              onEditRoutineItem={handleEditRoutineItem}
               onDeleteRoutineItem={handleDeleteRoutineItem}
               onResetTodayRoutine={handleResetTodayRoutine}
             />
@@ -1173,6 +1253,7 @@ export default function App() {
       <AskCoachModal
         isOpen={isAskCoachOpen}
         onClose={() => setIsAskCoachOpen(false)}
+        existingRoutines={routines}
         onApplyPlan={handleApplyCoachPlan}
       />
 
