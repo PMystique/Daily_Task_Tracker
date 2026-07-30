@@ -1,0 +1,6 @@
+{
+  "name": "Daily Task & Routine Tracker",
+  "description": "Category-based task & goal manager with morning/evening/weekend routines, calendar event sync, push notification deadline reminders, progress analytics, tags, and dark mode.",
+  "requestFramePermissions": ["notifications"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
